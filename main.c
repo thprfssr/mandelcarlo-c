@@ -15,10 +15,42 @@ long double complex iterate(long double complex z, long double complex c)
 	return z*z + c;
 }
 
+/* Determine whether a complex number is within the principal cardioid of the
+ * Mandelbrot set. */
+bool is_cardioid(long double complex c)
+{
+	long double complex s = c - 1/4;
+	long double r = cabsl(s);
+	long double x = creall(s);
+	if (2 * r*r < r - x)
+		return true;
+	else
+		return false;
+}
+
+/* Determine whether a complex number is within the principal bulb of the
+ * Mandelbrot set. */
+bool is_bulb(long double complex c)
+{
+	long double complex s = c + 1;
+	long double r = cabsl(s);
+	if (r < 1/4)
+		return true;
+	else
+		return false;
+}
+
 /* Determines whether a given complex number is contained within the partial
  * Mandelbrot set of a given threshold. */
 bool is_mandelbrot(long double complex c, unsigned int threshold)
 {
+	/* First check if the given point is within the principal cardioid or
+	 * the principal bulb in order to spend less time in this function. */
+	if (is_cardioid(c))
+		return true;
+	if (is_bulb(c))
+		return true;
+
 	long double complex z = 0;
 	for (unsigned int i = 0; i < threshold; i++) {
 		z = iterate(z, c);
