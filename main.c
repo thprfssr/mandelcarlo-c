@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+#include <sys/time.h>
 
 #define X_MIN (-2)
 #define X_MAX (0.58)
@@ -77,7 +77,9 @@ long double uniform(long double a, long double b)
  * checked. */
 void integrate(unsigned int threshold, unsigned int samples)
 {
-	srandom(time(NULL));
+	struct timeval T;
+	gettimeofday(&T, NULL);
+	srandom(T.tv_usec);
 	unsigned int hits = 0;
 	for (unsigned int i = 0; i < samples; i++) {
 		long double x = uniform(X_MIN, X_MAX);
